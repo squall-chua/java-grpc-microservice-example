@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: java-grpc-microservice-example
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/mydb # Used when explicit
+
+de:
+  flapdoodle:
+    mongodb:
+      embedded:
+        version: 4.0.12
+  # Embedded mongo is used if running without actual mongo instance automatically by flapdoodle
+
+server:
+  port: 8080 # HTTP transcoding gateway and Prometheus metrics
+
+grpc:
+  server:
+    port: 9090 # Base gRPC port
+  extensions:
+    transcoding:
+      enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus, health, info
+  endpoint:
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+jwt:
+  secret: super-secret-key-that-is-at-least-32-bytes

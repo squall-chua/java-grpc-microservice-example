@@ -1,0 +1,9 @@
+{
+    "protoc": {
+        "options": [
+            "--proto_path=${workspaceRoot}/src/main/proto",
+            "--proto_path=${workspaceRoot}/build/extracted-include-protos/main"
+        ]
+    },
+    "java.configuration.updateBuildConfiguration": "interactive"
+}
