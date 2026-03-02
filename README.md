@@ -68,3 +68,71 @@ To construct the underlying `.proto` files dynamically and boot the application 
 ```
 
 The application will launch on its designated server ports handling concurrent gRPC communication.
+
+### Manual Testing with cURL
+
+The application provides a gRPC-JSON transcoding API on HTTP port `8080`. To access these endpoints, you must provide a valid JWT Bearer token in the `Authorization` header.
+
+#### 1. Generate a JWT Token
+
+You can generate a test token at [jwt.io](https://jwt.io/):
+*   **Algorithm:** HS256
+*   **Payload:**
+    ```json
+    {
+      "sub": "testuser",
+      "scopes": "read:items write:items",
+      "roles": "admin editor"
+    }
+    ```
+*   **Secret (from `application.yml`):** `super-secret-key-that-is-at-least-32-bytes`
+
+Export this token to an environment variable in your terminal:
+```bash
+export TOKEN="your.jwt.token"
+```
+
+#### 2. cURL Examples
+
+**Create an Item** (Requires `write:items` scope and `admin` or `editor` role):
+```bash
+curl -X POST http://localhost:8080/v1/items \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Sample Item",
+    "description": "A very nice sample item",
+    "price": 19.99
+  }'
+```
+
+**Get an Item** (Requires `read:items` scope):
+```bash
+curl http://localhost:8080/v1/items/<item-id> \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+**List Items** (Requires `read:items` scope):
+```bash
+curl "http://localhost:8080/v1/items?page_request.page_number=1&page_request.page_size=10" \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+**Update an Item** (Requires `write:items` scope and `admin` or `editor` role):
+```bash
+curl -X PUT http://localhost:8080/v1/items/<item-id> \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "id": "<item-id>",
+    "name": "Updated Sample Item",
+    "description": "An updated description",
+    "price": 25.00
+  }'
+```
+
+**Delete an Item** (Requires `write:items` scope and `admin` role):
+```bash
+curl -X DELETE http://localhost:8080/v1/items/<item-id> \
+  -H "Authorization: Bearer $TOKEN"
+```

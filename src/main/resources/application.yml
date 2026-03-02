@@ -14,6 +14,7 @@ de:
 
 server:
   port: 8080 # HTTP transcoding gateway and Prometheus metrics
+  shutdown: graceful
 
 grpc:
   server:
